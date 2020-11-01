@@ -1,0 +1,2 @@
+class LoxError(Exception):
+    pass
