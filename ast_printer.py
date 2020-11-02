@@ -6,7 +6,7 @@ from expression import Grouping
 from lox_token import Token
 from token_type import TokenType
 
-class ASTPrinter(ExprVisitor):
+class AstPrinter(ExprVisitor):
     def print(self, expr):
         return expr.accept(self)
 
@@ -36,6 +36,6 @@ class ASTPrinter(ExprVisitor):
         return output
 
 if __name__ == '__main__':
-    # Test to see if ASTPrinter does what it should
+    # Test to see if AstPrinter does what it should
     expression = Binary(Unary(Token(TokenType.MINUS, '-', '', 1), Literal(123)), Token(TokenType.STAR, '*', '', 1), Grouping(Literal(45.67)))
-    print(ASTPrinter().print(expression))
+    print(AstPrinter().print(expression))

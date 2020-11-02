@@ -1,13 +1,22 @@
 import sys
 import os
 from scanner import Scanner
+from parser import Parser
+from ast_printer import AstPrinter
+from token_type import TokenType
 
 
-class Interpreter:
+class Lox:
     __slots__ = ('had_error')
 
     def __init__(self):
         self.had_error = False
+
+    def error(self, token, message):
+        if token.token_type == TokenType.EOF:
+            self.report_error(token.line, " at end", message)
+        else:
+            self.report_error(token.line, f" at '{token.lexeme}'", message)
 
     def run_file(self, filename):
         if os.path.exists(filename):
@@ -19,9 +28,13 @@ class Interpreter:
     def run(self, line):
         scanner = Scanner(line)
         tokens = scanner.scan_tokens()
+        parser = Parser(self, tokens)
+        expression = parser.parse()
 
-        for token in tokens:
-            print(token)
+        if self.had_error:
+            return
+
+        print(AstPrinter().print(expression))
 
     def run_prompt(self):
         line = input('> ')
@@ -29,22 +42,19 @@ class Interpreter:
             self.run(line)
             line = input('> ')
 
-    def error(self, line, message):
-        self.report_error(line, "", message)
-
     def report_error(self, line, where, message):
-        print("[line " + line + "] Error" + where + ": " + message)
+        print(f"line {line} Error{where}: {message}")
         self.had_error = True
 
 if __name__ == '__main__':
-    lox_interpreter = Interpreter()
+    lox = Lox()
 
     if len(sys.argv) > 2:
         print('Usage: python3 lox.py [script]')
     elif len(sys.argv) == 2:
-        lox_interpreter.run_file(sys.argv[1])
-        if lox_interpreter.had_error:
+        lox.run_file(sys.argv[1])
+        if lox.had_error:
             sys.exit(65)
     else:
-        lox_interpreter.run_prompt()
-        lox_interpreter.had_error = False
+        lox.run_prompt()
+        lox.had_error = False

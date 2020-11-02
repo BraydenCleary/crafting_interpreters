@@ -1,12 +1,3 @@
-class Expression:
-    pass
-
-class Binary(Expression):
-    def __init__(self, left, operator, right):
-        self.left = left
-        self.operator = operator
-        self.right = right
-
 def define_ast(output_file, base_class, classes_to_define):
     output = ''
 
@@ -45,7 +36,7 @@ class {}({}):
 {}
 
     def accept(self, visitor):
-        visitor.visit{}{}(self)
+        return visitor.visit{}{}(self)
         """.format(class_name, base_class, ', '.join(attributes), setting_attributes, class_name, base_class)
 
     with open(output_file, 'w') as f:
